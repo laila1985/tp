@@ -3,5 +3,6 @@ package com.example.ledger.domain;
 public enum AuthorizationState {
     HOLD,
     SETTLED,
-    REJECTED
+    REJECTED,
+    NOT_FOUND
 }

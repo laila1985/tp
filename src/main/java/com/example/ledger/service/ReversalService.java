@@ -9,6 +9,19 @@ public final class ReversalService {
             LedgerEvent reversal,
             LedgerEvent original
     ) {
+        if (reversal.getType() != EventType.REVERSAL) {
+            throw new IllegalStateException(
+                    "Event is not a reversal"
+            );
+        }
+
+        if (!original.getEventId()
+                .equals(reversal.getReversedEventId())) {
+            throw new IllegalStateException(
+                    "Reversal does not reference the supplied original event"
+            );
+        }
+
         if (!original.getAccountId()
                 .equals(reversal.getAccountId())) {
             throw new IllegalStateException(

@@ -2,6 +2,7 @@ package com.example.ledger.domain;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 
 public final class Money {
 
@@ -83,6 +84,25 @@ public final class Money {
                             + other.currency
             );
         }
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (!(other instanceof Money money)) {
+            return false;
+        }
+
+        return currency == money.currency
+                && amount.equals(money.amount);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(currency, amount);
     }
 
     @Override

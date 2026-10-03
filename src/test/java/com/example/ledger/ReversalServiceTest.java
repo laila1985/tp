@@ -65,7 +65,7 @@ class ReversalServiceTest {
     }
 
     @Test
-    void shouldValidateAuthorizationReversal() {
+    void shouldRejectAuthorizationReversal() {
 
         LedgerEvent original = new LedgerEvent(
                 "E1",
@@ -85,8 +85,15 @@ class ReversalServiceTest {
                 Day.DAY_1
         );
 
-        assertDoesNotThrow(() ->
-                service.validate(reversal, original)
+        IllegalStateException exception =
+                assertThrows(
+                        IllegalStateException.class,
+                        () -> service.validate(reversal, original)
+                );
+
+        assertEquals(
+                "Cannot reverse event type: AUTHORIZATION",
+                exception.getMessage()
         );
     }
 
