@@ -1,0 +1,395 @@
+package com.example.ledger;
+
+import com.example.ledger.domain.Authorization;
+import com.example.ledger.domain.EventType;
+import com.example.ledger.domain.LedgerEvent;
+import com.example.ledger.domain.Money;
+import com.example.ledger.domain.Currency;
+import com.example.ledger.domain.Day;
+import com.example.ledger.service.AuthorizationService;
+import com.example.ledger.service.BalanceService;
+import com.example.ledger.service.LedgerService;
+import com.example.ledger.service.ReversalService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class LedgerServiceTest {
+
+    private AuthorizationService authorizationService;
+    private BalanceService balanceService;
+    private ReversalService reversalService;
+
+    private LedgerService ledgerService;
+
+    @BeforeEach
+    void setUp() {
+
+        authorizationService =
+                mock(AuthorizationService.class);
+
+        balanceService =
+                mock(BalanceService.class);
+
+        reversalService =
+                mock(ReversalService.class);
+
+        ledgerService = new LedgerService(
+                authorizationService,
+                balanceService,
+                reversalService
+        );
+    }
+
+    @Test
+    void shouldProcessCredit() {
+
+        LedgerEvent event = event(
+                "E1",
+                EventType.CREDIT,
+                "ACC-001",
+                "1200.00",
+                Day.DAY_1
+        );
+
+        ledgerService.process(event);
+
+        verify(balanceService).credit(
+                "ACC-001",
+                money("1200.00")
+        );
+
+        verify(balanceService, never())
+                .debit(anyString(), any());
+
+        verifyNoInteractions(
+                authorizationService,
+                reversalService
+        );
+    }
+
+    @Test
+    void shouldProcessDebit() {
+
+        LedgerEvent event = event(
+                "E2",
+                EventType.DEBIT,
+                "ACC-001",
+                "950.00",
+                Day.DAY_1
+        );
+
+        ledgerService.process(event);
+
+        verify(balanceService).debit(
+                "ACC-001",
+                money("950.00")
+        );
+
+        verify(balanceService, never())
+                .credit(anyString(), any());
+
+        verifyNoInteractions(
+                authorizationService,
+                reversalService
+        );
+    }
+
+    @Test
+    void shouldProcessAuthorization() {
+
+        LedgerEvent event = new LedgerEvent(
+                "E3",
+                Day.DAY_2,
+                EventType.AUTHORIZATION,
+                "ACC-001",
+                money("200.00"),
+                Day.DAY_2,
+                "Auth-A",
+                null
+        );
+
+        Authorization authorization = mock(Authorization.class);
+
+        when(authorizationService.create(
+                "Auth-A",
+                "ACC-001",
+                money("200.00")
+        )).thenReturn(authorization);
+
+        when(authorization.getAccountId())
+                .thenReturn("ACC-001");
+
+        when(authorization.getHoldAmount())
+                .thenReturn(money("200.00"));
+
+        ledgerService.process(event);
+
+        verify(authorizationService).create(
+                "Auth-A",
+                "ACC-001",
+                money("200.00")
+        );
+
+        verify(balanceService).placeHold(
+                "ACC-001",
+                money("200.00")
+        );
+    }
+
+    @Test
+    void shouldProcessSettlement() {
+
+        LedgerEvent event = new LedgerEvent(
+                "E5",
+                Day.DAY_4,
+                EventType.SETTLEMENT,
+                "ACC-001",
+                money("185.00"),
+                Day.DAY_4,
+                "Auth-A",
+                null
+        );
+
+        Authorization authorization = mock(Authorization.class);
+
+        when(authorizationService.settle(
+                "Auth-A",
+                money("185.00")
+        )).thenReturn(authorization);
+
+        when(authorization.getAccountId())
+                .thenReturn("ACC-001");
+
+        when(authorization.getHoldAmount())
+                .thenReturn(money("200.00"));
+
+        ledgerService.process(event);
+
+        verify(authorizationService).settle(
+                "Auth-A",
+                money("185.00")
+        );
+
+        verify(balanceService).releaseHold(
+                "ACC-001",
+                money("200.00")
+        );
+
+        verify(balanceService).debit(
+                "ACC-001",
+                money("185.00")
+        );
+    }
+
+    @Test
+    void shouldProcessDebitReversal() {
+
+        LedgerEvent original = event(
+                "E7",
+                EventType.DEBIT,
+                "ACC-001",
+                "620.00",
+                Day.DAY_2
+        );
+
+        LedgerEvent reversal = new LedgerEvent(
+                "E9",
+                Day.DAY_6,
+                EventType.REVERSAL,
+                "ACC-001",
+                money("620.00"),
+                Day.DAY_2,
+                null,
+                "E7"
+        );
+
+        ledgerService.process(original);
+        ledgerService.process(reversal);
+
+        verify(balanceService).debit(
+                "ACC-001",
+                money("620.00")
+        );
+
+        verify(balanceService).credit(
+                "ACC-001",
+                money("620.00")
+        );
+
+        verify(reversalService).validate(
+                reversal,
+                original
+        );
+    }
+
+    @Test
+    void shouldProcessCreditReversal() {
+
+        LedgerEvent original = event(
+                "E1",
+                EventType.CREDIT,
+                "ACC-001",
+                "1200.00",
+                Day.DAY_1
+        );
+
+        LedgerEvent reversal = new LedgerEvent(
+                "E2",
+                Day.DAY_2,
+                EventType.REVERSAL,
+                "ACC-001",
+                money("1200.00"),
+                Day.DAY_1,
+                null,
+                "E1"
+        );
+
+        ledgerService.process(original);
+        ledgerService.process(reversal);
+
+        verify(balanceService).credit(
+                "ACC-001",
+                money("1200.00")
+        );
+
+        verify(balanceService).debit(
+                "ACC-001",
+                money("1200.00")
+        );
+
+        verify(reversalService).validate(
+                reversal,
+                original
+        );
+    }
+
+    @Test
+    void shouldRejectReversalWhenOriginalDoesNotExist() {
+
+        LedgerEvent reversal = new LedgerEvent(
+                "E9",
+                Day.DAY_6,
+                EventType.REVERSAL,
+                "ACC-001",
+                money("620.00"),
+                Day.DAY_2,
+                null,
+                "E7"
+        );
+
+        IllegalStateException exception =
+                assertThrows(
+                        IllegalStateException.class,
+                        () -> ledgerService.process(reversal)
+                );
+
+        assertEquals(
+                "Original event not found: E7",
+                exception.getMessage()
+        );
+
+        verifyNoInteractions(
+                balanceService,
+                reversalService
+        );
+    }
+
+    @Test
+    void shouldNotAllowDuplicateEventId() {
+
+        LedgerEvent event = event(
+                "E1",
+                EventType.CREDIT,
+                "ACC-001",
+                "100.00",
+                Day.DAY_1
+        );
+
+        ledgerService.process(event);
+
+        IllegalStateException exception =
+                assertThrows(
+                        IllegalStateException.class,
+                        () -> ledgerService.process(event)
+                );
+
+        assertEquals(
+                "Event already exists: E1",
+                exception.getMessage()
+        );
+    }
+
+    private LedgerEvent event(
+            String id,
+            EventType type,
+            String accountId,
+            String amount,
+            Day valueDate
+    ) {
+        return new LedgerEvent(
+                id,
+                Day.DAY_1,
+                type,
+                accountId,
+                money(amount),
+                valueDate,
+                null,
+                null
+        );
+    }
+
+    private Money money(String amount) {
+        return new Money(
+                Currency.AED,
+                new BigDecimal(amount)
+        );
+    }
+
+
+    @Test
+    void shouldReverseE7UsingItsValueDate() {
+
+        LedgerEvent e7 = new LedgerEvent(
+                "E7",
+                Day.DAY_5,
+                EventType.DEBIT,
+                "ACC-001",
+                money("620.00"),
+                Day.DAY_2,
+                null,
+                null
+        );
+
+        LedgerEvent e9 = new LedgerEvent(
+                "E9",
+                Day.DAY_6,
+                EventType.REVERSAL,
+                "ACC-001",
+                money("620.00"),
+                Day.DAY_2,
+                null,
+                "E7"
+        );
+
+        ledgerService.process(e7);
+        ledgerService.process(e9);
+
+        verify(reversalService).validate(e9, e7);
+
+        verify(balanceService).debit(
+                "ACC-001",
+                money("620.00")
+        );
+
+        verify(balanceService).credit(
+                "ACC-001",
+                money("620.00")
+        );
+    }
+
+}
