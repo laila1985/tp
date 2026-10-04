@@ -3,7 +3,7 @@ package com.example.ledger.service;
 import com.example.ledger.domain.model.AccountBalance;
 import com.example.ledger.domain.Currency;
 import com.example.ledger.domain.Day;
-import com.example.ledger.domain.Money;
+import com.example.ledger.domain.model.Money;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

@@ -1,12 +1,12 @@
 package com.example.ledger;
 
-import com.example.ledger.domain.Authorization;
+import com.example.ledger.domain.model.Authorization;
 import com.example.ledger.domain.EventType;
-import com.example.ledger.domain.LedgerEvent;
-import com.example.ledger.domain.Money;
+import com.example.ledger.domain.model.LedgerEvent;
+import com.example.ledger.domain.model.Money;
 import com.example.ledger.domain.Currency;
 import com.example.ledger.domain.Day;
-import com.example.ledger.domain.LedgerError;
+import com.example.ledger.domain.error.LedgerError;
 import com.example.ledger.exception.LedgerException;
 import com.example.ledger.service.*;
 import org.junit.jupiter.api.BeforeEach;

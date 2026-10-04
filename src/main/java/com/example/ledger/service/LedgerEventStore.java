@@ -1,7 +1,7 @@
 package com.example.ledger.service;
 
-import com.example.ledger.domain.LedgerError;
-import com.example.ledger.domain.LedgerEvent;
+import com.example.ledger.domain.error.LedgerError;
+import com.example.ledger.domain.model.LedgerEvent;
 import com.example.ledger.exception.LedgerException;
 
 import java.util.LinkedHashMap;

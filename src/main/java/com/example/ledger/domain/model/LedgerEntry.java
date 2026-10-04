@@ -1,7 +1,5 @@
 package com.example.ledger.domain.model;
 
-import com.example.ledger.domain.Money;
-
 import java.time.LocalDate;
 
 public final class LedgerEntry {

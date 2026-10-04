@@ -1,4 +1,7 @@
-package com.example.ledger.domain;
+package com.example.ledger.domain.model;
+
+import com.example.ledger.domain.Day;
+import com.example.ledger.domain.EventType;
 
 public final class LedgerEvent {
 

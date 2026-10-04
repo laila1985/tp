@@ -3,7 +3,7 @@ package com.example.ledger;
 import com.example.ledger.domain.model.AccountBalance;
 import com.example.ledger.domain.Day;
 import com.example.ledger.domain.error.LedgerErrorEntry;
-import com.example.ledger.domain.LedgerEvent;
+import com.example.ledger.domain.model.LedgerEvent;
 import com.example.ledger.report.DailyReportPrinter;
 import com.example.ledger.replay.LedgerReplayEngine;
 import com.example.ledger.stream.EventStream;

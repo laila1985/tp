@@ -1,7 +1,7 @@
 package com.example.ledger;
 
 import com.example.ledger.domain.Currency;
-import com.example.ledger.domain.Money;
+import com.example.ledger.domain.model.Money;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

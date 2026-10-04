@@ -1,6 +1,6 @@
 package com.example.ledger.exception;
 
-import com.example.ledger.domain.LedgerError;
+import com.example.ledger.domain.error.LedgerError;
 
 public class LedgerException extends RuntimeException {
 

@@ -1,6 +1,6 @@
 package com.example.ledger.service;
 import com.example.ledger.domain.model.AccountBalance;
-import com.example.ledger.domain.Money;
+import com.example.ledger.domain.model.Money;
 
 
 

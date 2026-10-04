@@ -1,4 +1,6 @@
-package com.example.ledger.domain;
+package com.example.ledger.domain.model;
+
+import com.example.ledger.domain.Currency;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

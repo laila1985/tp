@@ -1,7 +1,5 @@
 package com.example.ledger.domain.error;
 
-import com.example.ledger.domain.LedgerError;
-
 public final class LedgerErrorEntry {
 
     private final String eventId;

@@ -1,6 +1,8 @@
 package com.example.ledger.stream;
 
 import com.example.ledger.domain.*;
+import com.example.ledger.domain.model.LedgerEvent;
+import com.example.ledger.domain.model.Money;
 
 import java.math.BigDecimal;
 import java.util.List;

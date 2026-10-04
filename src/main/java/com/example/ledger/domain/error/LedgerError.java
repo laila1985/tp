@@ -1,4 +1,4 @@
-package com.example.ledger.domain;
+package com.example.ledger.domain.error;
 
 public enum LedgerError {
 

@@ -1,7 +1,5 @@
 package com.example.ledger.domain.model;
 
-import com.example.ledger.domain.Money;
-
 public final class AccountBalance {
 
     private Money ledgerBalance;

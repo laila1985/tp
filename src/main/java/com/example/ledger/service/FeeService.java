@@ -1,7 +1,7 @@
 package com.example.ledger.service;
 
 import com.example.ledger.domain.Currency;
-import com.example.ledger.domain.Money;
+import com.example.ledger.domain.model.Money;
 
 public class FeeService {
 

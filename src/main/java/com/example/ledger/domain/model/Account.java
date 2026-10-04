@@ -1,8 +1,5 @@
 package com.example.ledger.domain.model;
 
-import com.example.ledger.domain.Authorization;
-import com.example.ledger.domain.Money;
-
 import java.util.*;
 
 public final class Account {

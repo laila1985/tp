@@ -1,6 +1,6 @@
 package com.example.ledger.report;
 
-import com.example.ledger.domain.Money;
+import com.example.ledger.domain.model.Money;
 
 import java.time.LocalDate;
 
