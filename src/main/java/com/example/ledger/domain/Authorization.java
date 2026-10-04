@@ -19,6 +19,14 @@ public final class Authorization {
         this.state = AuthorizationState.HOLD;
     }
 
+    public Authorization(String authorizationId, String accountId, Money holdAmount, AuthorizationState state) {
+        this.authorizationId = authorizationId;
+        this.accountId = accountId;
+        this.holdAmount = holdAmount;
+        this.settledAmount = null;
+        this.state = state;
+    }
+
     public String getAuthorizationId() {
         return authorizationId;
     }

@@ -6,10 +6,9 @@ import com.example.ledger.domain.LedgerEvent;
 import com.example.ledger.domain.Money;
 import com.example.ledger.domain.Currency;
 import com.example.ledger.domain.Day;
-import com.example.ledger.service.AuthorizationService;
-import com.example.ledger.service.BalanceService;
-import com.example.ledger.service.LedgerService;
-import com.example.ledger.service.ReversalService;
+import com.example.ledger.domain.LedgerError;
+import com.example.ledger.exception.LedgerException;
+import com.example.ledger.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,27 +17,39 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class LedgerServiceTest {
+class LedgerReplayEngineTest {
 
     private AuthorizationService authorizationService;
-    private BalanceService balanceService;
+    private BalanceServiceImp balanceService;
+    private LedgerEventStore eventStore;
     private ReversalService reversalService;
 
-    private LedgerService ledgerService;
+    private LedgerReplayEngine ledgerService;
 
     @BeforeEach
     void setUp() {
+
+        FeeService feeService =
+                mock(FeeService.class);
+
+        InterestService interestService =
+                mock(InterestService.class);
 
         authorizationService =
                 mock(AuthorizationService.class);
 
         balanceService =
-                mock(BalanceService.class);
+                mock(BalanceServiceImp.class);
+
+        eventStore =
+                new LedgerEventStore();
 
         reversalService =
                 mock(ReversalService.class);
 
-        ledgerService = new LedgerService(
+        ledgerService = new LedgerReplayEngine(
+                feeService,
+                interestService,
                 authorizationService,
                 balanceService,
                 reversalService
@@ -282,15 +293,15 @@ class LedgerServiceTest {
                 "E7"
         );
 
-        IllegalStateException exception =
+        LedgerException exception =
                 assertThrows(
-                        IllegalStateException.class,
+                        LedgerException.class,
                         () -> ledgerService.process(reversal)
                 );
 
         assertEquals(
-                "Original event not found: E7",
-                exception.getMessage()
+                LedgerError.EVENT_NOT_FOUND,
+                exception.getError()
         );
 
         verifyNoInteractions(
@@ -312,15 +323,15 @@ class LedgerServiceTest {
 
         ledgerService.process(event);
 
-        IllegalStateException exception =
+        LedgerException exception =
                 assertThrows(
-                        IllegalStateException.class,
+                        LedgerException.class,
                         () -> ledgerService.process(event)
                 );
 
         assertEquals(
-                "Event already exists: E1",
-                exception.getMessage()
+                LedgerError.EVENT_ALREADY_EXISTS,
+                exception.getError()
         );
     }
 

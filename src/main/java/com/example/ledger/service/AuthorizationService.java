@@ -1,7 +1,10 @@
 package com.example.ledger.service;
 
 import com.example.ledger.domain.Authorization;
+import com.example.ledger.domain.AuthorizationState;
+import com.example.ledger.domain.LedgerError;
 import com.example.ledger.domain.Money;
+import com.example.ledger.exception.LedgerException;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -18,9 +21,12 @@ public final class AuthorizationService {
             Money holdAmount
     ) {
         if (authorizations.containsKey(authorizationId)) {
-            throw new IllegalStateException(
+
+            throw new LedgerException(
+                    LedgerError.AUTHORIZATION_ALREADY_EXISTS,
                     "Authorization already exists: " + authorizationId
             );
+
         }
 
         Authorization authorization = new Authorization(
@@ -34,7 +40,7 @@ public final class AuthorizationService {
         return authorization;
     }
 
-    public Authorization get(String authorizationId) {
+    public Authorization getAuthorisaction(String authorizationId) {
         Authorization authorization = authorizations.get(authorizationId);
 
         if (authorization == null) {
@@ -47,14 +53,47 @@ public final class AuthorizationService {
     }
 
 
-    public Authorization settle(String authorizationId, Money settledAmount) {
-        Authorization authorization = authorizations.get(authorizationId);
+    public Authorization settle(String authorizationId, String accountId, Money settledAmount) {
+
+        if (!exists(authorizationId)){
+            reject(authorizationId, accountId, settledAmount);
+            throw new LedgerException(
+                    LedgerError.AUTHORIZATION_NOT_FOUND,
+                    "Authorisation not found: "
+                            + authorizationId
+            );
+        }
+
+        Authorization authorization =getAuthorisaction(authorizationId);
+        if (authorization.getState() != AuthorizationState.HOLD){
+            reject(authorizationId, accountId, settledAmount);
+            throw new LedgerException(
+                    LedgerError.AUTHORIZATION_INVALID_STATE,
+                    "Authorisation State : "
+                            + authorization.getState()
+            );
+        }
+        if (!authorization.getAccountId().equalsIgnoreCase(accountId)){
+            reject(authorizationId, accountId, settledAmount);
+            throw new LedgerException(
+                    LedgerError.AUTHORIZATION_ACCOUNT_MISMATCH,
+                    "Original account Id: " + authorization.getAccountId()+
+                            " Current Account Id : " + accountId
+            );
+        }
+
         authorization.settle(settledAmount);
         return authorization;
     }
 
-    public void reject(String authorizationId) {
-        get(authorizationId).reject();
+    public void reject(String authorizationId, String accountId, Money settledAmount) {
+        Authorization authorization = new Authorization(
+                authorizationId,
+                accountId,
+                settledAmount
+        );
+
+        authorizations.put(authorizationId, authorization);
     }
 
     public boolean exists(String authorizationId) {

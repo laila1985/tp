@@ -1,11 +1,8 @@
 package com.example.ledger;
 
 
-import com.example.ledger.domain.EventType;
-import com.example.ledger.domain.LedgerEvent;
-import com.example.ledger.domain.Money;
-import com.example.ledger.domain.Currency;
-import com.example.ledger.domain.Day;
+import com.example.ledger.domain.*;
+import com.example.ledger.exception.LedgerException;
 import com.example.ledger.service.ReversalService;
 import org.junit.jupiter.api.Test;
 
@@ -85,15 +82,15 @@ class ReversalServiceTest {
                 Day.DAY_1
         );
 
-        IllegalStateException exception =
+        LedgerException exception =
                 assertThrows(
-                        IllegalStateException.class,
+                        LedgerException.class,
                         () -> service.validate(reversal, original)
                 );
 
         assertEquals(
-                "Cannot reverse event type: AUTHORIZATION",
-                exception.getMessage()
+                LedgerError.REVERSAL_NOT_ALLOWED,
+                exception.getError()
         );
     }
 
@@ -116,9 +113,9 @@ class ReversalServiceTest {
                 Day.DAY_1
         );
 
-        IllegalStateException exception =
+        LedgerException exception =
                 assertThrows(
-                        IllegalStateException.class,
+                        LedgerException.class,
                         () -> service.validate(
                                 notReversal,
                                 original
@@ -126,8 +123,8 @@ class ReversalServiceTest {
                 );
 
         assertEquals(
-                "Event is not a reversal",
-                exception.getMessage()
+                LedgerError.EVENT_NOT_FOUND,
+                exception.getError()
         );
     }
 
@@ -149,9 +146,9 @@ class ReversalServiceTest {
                 Day.DAY_1
         );
 
-        IllegalStateException exception =
+        LedgerException exception =
                 assertThrows(
-                        IllegalStateException.class,
+                        LedgerException.class,
                         () -> service.validate(
                                 reversal,
                                 original
@@ -159,8 +156,8 @@ class ReversalServiceTest {
                 );
 
         assertEquals(
-                "Reversal does not reference the supplied original event",
-                exception.getMessage()
+                LedgerError.REVERSAL_ACCOUNT_MISMATCH,
+                exception.getError()
         );
     }
 
@@ -186,9 +183,9 @@ class ReversalServiceTest {
                 "E1"
         );
 
-        IllegalStateException exception =
+        LedgerException exception =
                 assertThrows(
-                        IllegalStateException.class,
+                        LedgerException.class,
                         () -> service.validate(
                                 reversal,
                                 original
@@ -196,8 +193,8 @@ class ReversalServiceTest {
                 );
 
         assertEquals(
-                "Reversal account does not match original",
-                exception.getMessage()
+                LedgerError.REVERSAL_ACCOUNT_MISMATCH,
+                exception.getError()
         );
     }
 
@@ -222,18 +219,18 @@ class ReversalServiceTest {
                 Day.DAY_1
         );
 
-        IllegalStateException exception =
+        LedgerException exception =
                 assertThrows(
-                        IllegalStateException.class,
+                        LedgerException.class,
                         () -> service.validate(
                                 reversal,
                                 original
                         )
                 );
 
-        assertTrue(
-                exception.getMessage()
-                        .contains("Cannot reverse event type")
+        assertEquals(
+                LedgerError.REVERSAL_NOT_ALLOWED,
+                exception.getError()
         );
     }
 
@@ -255,9 +252,9 @@ class ReversalServiceTest {
                 Day.DAY_1
         );
 
-        IllegalStateException exception =
+        LedgerException exception =
                 assertThrows(
-                        IllegalStateException.class,
+                        LedgerException.class,
                         () -> service.validate(
                                 reversal,
                                 original
@@ -265,8 +262,8 @@ class ReversalServiceTest {
                 );
 
         assertEquals(
-                "Reversal amount does not match original",
-                exception.getMessage()
+                LedgerError.REVERSAL_AMOUNT_MISMATCH,
+                exception.getError()
         );
     }
 
@@ -288,9 +285,9 @@ class ReversalServiceTest {
                 Day.DAY_1
         );
 
-        IllegalStateException exception =
+        LedgerException exception =
                 assertThrows(
-                        IllegalStateException.class,
+                        LedgerException.class,
                         () -> service.validate(
                                 reversal,
                                 original
@@ -298,8 +295,8 @@ class ReversalServiceTest {
                 );
 
         assertEquals(
-                "Reversal value date does not match original",
-                exception.getMessage()
+                LedgerError.REVERSAL_VALUE_DATE_MISMATCH,
+                exception.getError()
         );
     }
 
@@ -346,5 +343,6 @@ class ReversalServiceTest {
                 new BigDecimal(amount)
         );
     }
+
 }
 

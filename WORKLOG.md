@@ -22,5 +22,21 @@ FeeServiceTest, InstallmentServiceTest, InterestServiceTest, FeeServiceTest, Mon
 2026-10-03 08:15
 define AuthorizationService
 
+2026-10-03 03:15
+cleaning the code
+processing the event 
+verifying the digestion and the balance 
+add balance daily 
+add for both hold and available amount
+clean the ledgerReplayEngine
+Update DailyReportPrinter to display daily report
+
+
+2026-10-03 03:55
+Clean Unused code
+
+
+
+
 
 

@@ -1,4 +1,6 @@
-package com.example.ledger.domain;
+package com.example.ledger.domain.model;
+
+import com.example.ledger.domain.Money;
 
 public final class AccountBalance {
 
@@ -8,6 +10,11 @@ public final class AccountBalance {
     public AccountBalance(Money zero) {
         this.ledgerBalance = zero;
         this.heldAmount = zero;
+    }
+
+    public AccountBalance(AccountBalance other) {
+        this.ledgerBalance = other.ledgerBalance;
+        this.heldAmount = other.heldAmount;
     }
 
     public Money getLedgerBalance() {
@@ -32,10 +39,12 @@ public final class AccountBalance {
 
     public void placeHold(Money amount) {
         heldAmount = heldAmount.add(amount);
+        debit(amount);
     }
 
     public void releaseHold(Money amount) {
         heldAmount = heldAmount.subtract(amount);
     }
+
 }
 
