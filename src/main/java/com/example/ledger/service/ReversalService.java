@@ -13,9 +13,9 @@ public final class ReversalService {
     ) {
         if (reversal.getType() != EventType.REVERSAL) {
             throw new LedgerException(
-                    LedgerError.EVENT_NOT_FOUND,
-                    "Original event not found: "
-                            + original.getReversedEventId()
+                    LedgerError.REVERSAL_NOT_ALLOWED,
+                    "Event is not a reversal: "
+                            + reversal.getEventId()
             );
         }
 

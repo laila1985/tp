@@ -45,6 +45,10 @@ public final class Authorization {
         return state;
     }
 
+    public Money getSettledAmount() {
+        return settledAmount;
+    }
+
 
     public void reject() {
         if (state != AuthorizationState.HOLD) {

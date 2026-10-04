@@ -1,3 +1,0 @@
-spring:
-  application:
-    name: in-memory-account-ledger-core

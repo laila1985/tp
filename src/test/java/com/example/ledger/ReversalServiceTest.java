@@ -126,7 +126,7 @@ class ReversalServiceTest {
                 );
 
         assertEquals(
-                LedgerError.EVENT_NOT_FOUND,
+                LedgerError.REVERSAL_NOT_ALLOWED,
                 exception.getError()
         );
     }

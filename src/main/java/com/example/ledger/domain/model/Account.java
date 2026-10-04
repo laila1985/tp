@@ -1,16 +1,11 @@
 package com.example.ledger.domain.model;
 
-import java.util.*;
+import com.example.ledger.domain.Currency;
 
 public final class Account {
 
     private final String accountId;
     private final Money openingBalance;
-
-    private final List<LedgerEntry> ledgerEntries = new ArrayList<>();
-
-    private final Map<String, Authorization> authorizations =
-            new HashMap<>();
 
     public Account(
             String accountId,
@@ -23,9 +18,11 @@ public final class Account {
         return accountId;
     }
 
-
-    public List<LedgerEntry> getLedgerEntries() {
-        return List.copyOf(ledgerEntries);
+    public Money getOpeningBalance() {
+        return openingBalance;
     }
 
+    public Currency getCurrency() {
+        return openingBalance.getCurrency();
+    }
 }

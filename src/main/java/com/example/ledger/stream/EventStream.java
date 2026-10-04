@@ -121,7 +121,7 @@ public final class EventStream {
                 ),
 
         // E10 — Day 5 — CREDIT — ACC-002 BHD 10.000
-        // Posted as three equal instalments
+        // Posted as three equal instalments (3.333 + 3.333 + 3.334).
         new LedgerEvent(
                         "E10",
                         Day.DAY_5,
@@ -130,7 +130,8 @@ public final class EventStream {
                         new Money(Currency.BHD, new BigDecimal("10.000")),
                         Day.DAY_5,
                         null,
-                        null
+                        null,
+                        3
                 ));
     }
 }

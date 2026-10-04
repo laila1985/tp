@@ -51,6 +51,10 @@ public final class Money {
         return amount.signum() == 0;
     }
 
+    public Money negate() {
+        return new Money(currency, amount.negate());
+    }
+
     public static Money zero(Currency currency) {
         return new Money(currency, BigDecimal.ZERO);
     }

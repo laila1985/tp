@@ -17,4 +17,13 @@ public enum Day {
     public int getNumber() {
         return number;
     }
+
+    public static Day of(int number) {
+        for (Day day : values()) {
+            if (day.number == number) {
+                return day;
+            }
+        }
+        throw new IllegalArgumentException("Unknown day number: " + number);
+    }
 }

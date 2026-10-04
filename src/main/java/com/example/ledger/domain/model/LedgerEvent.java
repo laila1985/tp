@@ -17,7 +17,14 @@ public final class LedgerEvent {
     private final String authorizationId;
     private final String reversedEventId;
 
+    // Number of equal instalments this event is posted in (1 = a single posting).
+    private final int installmentCount;
+
     public LedgerEvent(String eventId, Day bookingDay, EventType type, String accountId, Money amount, Day valueDate, String authorizationId, String reversedEventId) {
+        this(eventId, bookingDay, type, accountId, amount, valueDate, authorizationId, reversedEventId, 1);
+    }
+
+    public LedgerEvent(String eventId, Day bookingDay, EventType type, String accountId, Money amount, Day valueDate, String authorizationId, String reversedEventId, int installmentCount) {
         this.eventId = eventId;
         this.bookingDay = bookingDay;
         this.type = type;
@@ -26,6 +33,7 @@ public final class LedgerEvent {
         this.valueDate = valueDate;
         this.authorizationId = authorizationId;
         this.reversedEventId = reversedEventId;
+        this.installmentCount = installmentCount;
     }
 
     public String getEventId() {
@@ -58,5 +66,9 @@ public final class LedgerEvent {
 
     public String getReversedEventId() {
         return reversedEventId;
+    }
+
+    public int getInstallmentCount() {
+        return installmentCount;
     }
 }
