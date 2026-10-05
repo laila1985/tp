@@ -285,7 +285,8 @@ public final class LedgerReplayEngine {
             for (String accountId : accounts.keySet()) {
                 perAccount.put(accountId, new AccountBalance(
                         closingBalance(accountId, day),
-                        heldAsOf(accountId, day)));
+                        heldAsOf(accountId, day),
+                        closingBalance(accountId, day)));
             }
             dailyBalances.put(day, perAccount);
         }

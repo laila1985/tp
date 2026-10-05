@@ -11,20 +11,23 @@ public final class AccountBalance {
 
     private Money ledgerBalance;
     private Money heldAmount;
+    private Money availableAmount;
 
     /** Creates a balance whose ledger equals the supplied opening balance and has no holds. */
     public AccountBalance(Money openingBalance) {
         this.ledgerBalance = openingBalance;
         this.heldAmount = Money.zero(openingBalance.getCurrency());
+        this.availableAmount = Money.zero(openingBalance.getCurrency());
     }
 
-    public AccountBalance(Money ledgerBalance, Money heldAmount) {
+    public AccountBalance(Money ledgerBalance, Money heldAmount, Money availableAmount) {
         this.ledgerBalance = ledgerBalance;
         this.heldAmount = heldAmount;
+        this.availableAmount =availableAmount;
     }
 
     public AccountBalance(AccountBalance other) {
-        this(other.ledgerBalance, other.heldAmount);
+        this(other.ledgerBalance, other.heldAmount, other.availableAmount);
     }
 
     public Money getLedgerBalance() {

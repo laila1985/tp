@@ -27,7 +27,7 @@ to display a daily report.
 
 19:55 - cleaned unused code.
 
-## 2026-10-04 (review + fix session)
+## 2026-10-04 (review + fix session Using cline)
 
 09:00 - started a full code review against the brief. Built and ran the existing
 suite: it compiled, but only "empty" placeholder tests plus one Spring context
@@ -77,3 +77,8 @@ calculations: closing balances 250.00/225.00/625.00/415.00/390.00/390.93 (AED),
 
 12:00 - wrote README.md, NUMBERS.md, AMBIGUITIES.md, REJECTED.md (added refused
 criterion 2 alongside 6, 7 and 8) and this log.
+
+## 2026-10-05 task two
+
+09:00
+review the technical document 
